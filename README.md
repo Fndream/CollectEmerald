@@ -1,4 +1,4 @@
-## 聚集石 Mod
+## 聚集石
 由[边界生存](https://github.com/Fndream/BorderSurvivalModpack)聚灵石特殊功能拆出的独立模组。
 
 ## 功能
