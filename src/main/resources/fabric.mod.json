@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "collect-emerald",
+  "version": "${version}",
+  "name": "collect-emerald",
+  "description": "Collect Emerald",
+  "authors": [
+    "Fndream"
+  ],
+  "contact": {
+    "homepage": "https://github.com/Fndream/CollectEmerald",
+    "sources": "https://github.com/Fndream/CollectEmerald",
+    "issues": "https://github.com/Fndream/CollectEmerald/issues"
+  },
+  "license": "MIT",
+  "icon": "icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": ["com.github.fndream.collectEmerald.CollectEmerald"]
+  },
+  "mixins": [
+    "collect-emerald.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.16.0",
+    "minecraft": ">=1.21.1"
+  }
+}
