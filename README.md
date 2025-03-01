@@ -1,5 +1,5 @@
-## 聚集石
-由[边界生存](https://github.com/Fndream/BorderSurvivalModpack)聚灵石功能拆分的独立模组。
+## 聚集石 Mod
+由[边界生存](https://github.com/Fndream/BorderSurvivalModpack)聚灵石特殊功能拆出的独立模组。
 
 ## 功能
 当绿宝石被置于物品展示框时，将聚集33x33x33范围内的掉落物。被置于物品展示框中的绿宝石在下文中被称为聚集石。<br/>
