@@ -22,6 +22,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Mixin(ItemEntity.class)
@@ -62,6 +63,7 @@ public abstract class ItemEntityMixin {
             return;
         }
         List<ItemFrameEntity> noChestitemFrameList = new ArrayList<>();
+        List<ItemFrameEntity> finalNoChestitemFrameList = noChestitemFrameList;
         List<ItemFrameEntity> itemFrameList = world.getEntitiesByClass(ItemFrameEntity.class, thit.getBoundingBox().expand(16), (itemFrame) -> {
                     ItemStack heldItemStack = itemFrame.getHeldItemStack();
                     if (!(heldItemStack.getItem() == Items.EMERALD)) {
@@ -73,7 +75,7 @@ public abstract class ItemEntityMixin {
                     boolean bl2 = chestBlockEntity instanceof BarrelBlockEntity;
                     boolean bl3 = chestBlockEntity instanceof ShulkerBoxBlockEntity;
                     if (!bl && !bl2 && !bl3) {
-                        noChestitemFrameList.add(itemFrame);
+                        finalNoChestitemFrameList.add(itemFrame);
                         return false;
                     }
                     Inventory inventory;
@@ -83,7 +85,7 @@ public abstract class ItemEntityMixin {
                         inventory = ((Inventory) chestBlockEntity);
                     }
                     if (inventory == null || inventory.isEmpty()) {
-                        noChestitemFrameList.add(itemFrame);
+                        finalNoChestitemFrameList.add(itemFrame);
                         return false;
                     }
                     for (int i = 0; i < inventory.size(); i++) {
@@ -101,7 +103,12 @@ public abstract class ItemEntityMixin {
         if (itemFrameList.isEmpty() && noChestitemFrameList.isEmpty()) {
             return;
         }
-
+        if (itemFrameList.size() > 1) {
+            itemFrameList = itemFrameList.stream().sorted(Comparator.comparingDouble(thit::squaredDistanceTo)).toList();
+        }
+        if (noChestitemFrameList.size() > 1) {
+            noChestitemFrameList = noChestitemFrameList.stream().sorted(Comparator.comparingDouble(thit::squaredDistanceTo)).toList();
+        }
         boolean hasSplit = false;
         ItemStack originalStack = thit.getStack();
         int totalCount = originalStack.getCount();
