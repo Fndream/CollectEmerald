@@ -43,7 +43,7 @@ public abstract class ItemEntityMixin {
         if (thit.getItemAge() < 40) {
             return;
         }
-        if (thit.getCommandTags().contains("collect")) {
+        if (thit.getCommandTags().contains("collectf")) {
             return;
         }
         int ticks = world.getServer().getTicks();
@@ -62,6 +62,11 @@ public abstract class ItemEntityMixin {
             cd = 9;
             return;
         }
+        collect(thit, world);
+    }
+
+    @Unique
+    private static void collect(ItemEntity thit, ServerWorld world) {
         List<ItemFrameEntity> noChestitemFrameList = new ArrayList<>();
         List<ItemFrameEntity> finalNoChestitemFrameList = noChestitemFrameList;
         List<ItemFrameEntity> itemFrameList = world.getEntitiesByClass(ItemFrameEntity.class, thit.getBoundingBox().expand(16), (itemFrame) -> {
@@ -75,7 +80,9 @@ public abstract class ItemEntityMixin {
                     boolean bl2 = chestBlockEntity instanceof BarrelBlockEntity;
                     boolean bl3 = chestBlockEntity instanceof ShulkerBoxBlockEntity;
                     if (!bl && !bl2 && !bl3) {
-                        finalNoChestitemFrameList.add(itemFrame);
+                        if (!thit.getCommandTags().contains("collect")) {
+                            finalNoChestitemFrameList.add(itemFrame);
+                        }
                         return false;
                     }
                     Inventory inventory;
@@ -108,13 +115,16 @@ public abstract class ItemEntityMixin {
         if (noChestitemFrameList.size() > 1) {
             noChestitemFrameList = noChestitemFrameList.stream().sorted(Comparator.comparingDouble(thit::squaredDistanceTo)).toList();
         }
+
         boolean hasSplit = false;
+        boolean isFilter = true;
         ItemStack originalStack = thit.getStack();
         int totalCount = originalStack.getCount();
         int frameCount = itemFrameList.size();
         if (frameCount == 0) {
             frameCount = noChestitemFrameList.size();
             itemFrameList = noChestitemFrameList;
+            isFilter = false;
         }
         int per = totalCount / frameCount;
         int remainder = totalCount % frameCount;
@@ -137,8 +147,7 @@ public abstract class ItemEntityMixin {
 
             newItem.setVelocity(Vec3d.ZERO);
             newItem.setPickupDelay(10);
-            newItem.addCommandTag("collect");
-
+            newItem.addCommandTag(isFilter ? "collectf" : "collect");
             world.spawnEntity(newItem);
             world.playSound(
                     null,
@@ -150,6 +159,9 @@ public abstract class ItemEntityMixin {
                     0.2F,
                     ((world.random.nextFloat() - world.random.nextFloat()) * 0.7F + 1.0F) * 2.0F
             );
+            if (!isFilter) {
+                collect(newItem, world);
+            }
             hasSplit = true;
         }
         if (hasSplit) {
