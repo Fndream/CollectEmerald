@@ -85,7 +85,6 @@ public abstract class ItemEntityMixin {
                         inventory = ((Inventory) chestBlockEntity);
                     }
                     if (inventory == null || inventory.isEmpty()) {
-                        finalNoChestitemFrameList.add(itemFrame);
                         return false;
                     }
                     for (int i = 0; i < inventory.size(); i++) {
