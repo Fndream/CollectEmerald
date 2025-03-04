@@ -1,5 +1,5 @@
 ## 聚集石
-由[边界生存](https://github.com/Fndream/BorderSurvivalModpack)聚灵石特殊效果拆分出的独立模组。
+由[边界生存](https://github.com/Fndream/BorderSurvivalModpack)聚灵石特性拆分出的独立模组。
 
 ## 功能
 这是一个仅作用于服务端的模组，它包含以下特性：<br/>
