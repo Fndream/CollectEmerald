@@ -22,7 +22,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.ArrayList;
-import java.util.Comparator;
+import java.util.Collections;
 import java.util.List;
 
 @Mixin(ItemEntity.class)
@@ -34,13 +34,17 @@ public abstract class ItemEntityMixin {
     @Unique
     private static int runTick = 0;
 
-    @Inject(method = "tick", at = @At(value = "HEAD"))
+    @Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;tick()V"))
     private void tick(CallbackInfo ci) {
         ItemEntity thit = (ItemEntity) (Object) this;
         if (!(thit.getWorld() instanceof ServerWorld world)) {
             return;
         }
         if (thit.getItemAge() < 40) {
+            if (thit.getItemAge() == 1 && thit.getCommandTags().contains("collect")) {
+                thit.tryMerge();
+                collect(thit, world);
+            }
             return;
         }
         if (thit.getCommandTags().contains("collectf")) {
@@ -110,21 +114,21 @@ public abstract class ItemEntityMixin {
             return;
         }
         if (itemFrameList.size() > 1) {
-            itemFrameList = itemFrameList.stream().sorted(Comparator.comparingDouble(thit::squaredDistanceTo)).toList();
+            Collections.shuffle(itemFrameList);
         }
         if (noChestitemFrameList.size() > 1) {
-            noChestitemFrameList = noChestitemFrameList.stream().sorted(Comparator.comparingDouble(thit::squaredDistanceTo)).toList();
+            Collections.shuffle(noChestitemFrameList);
         }
 
         boolean hasSplit = false;
-        boolean isFilter = true;
+        boolean isFilter = false;
         ItemStack originalStack = thit.getStack();
         int totalCount = originalStack.getCount();
-        int frameCount = itemFrameList.size();
+        int frameCount = noChestitemFrameList.size();
         if (frameCount == 0) {
-            frameCount = noChestitemFrameList.size();
-            itemFrameList = noChestitemFrameList;
-            isFilter = false;
+            frameCount = itemFrameList.size();
+            noChestitemFrameList = itemFrameList;
+            isFilter = true;
         }
         int per = totalCount / frameCount;
         int remainder = totalCount % frameCount;
@@ -135,7 +139,7 @@ public abstract class ItemEntityMixin {
 
             ItemStack splitStack = originalStack.copy();
             splitStack.setCount(amount);
-            ItemFrameEntity targetFrame = itemFrameList.get(i);
+            ItemFrameEntity targetFrame = noChestitemFrameList.get(i);
             BlockPos pos = targetFrame.getBlockPos();
             ItemEntity newItem = new ItemEntity(
                     world,
@@ -159,13 +163,10 @@ public abstract class ItemEntityMixin {
                     0.2F,
                     ((world.random.nextFloat() - world.random.nextFloat()) * 0.7F + 1.0F) * 2.0F
             );
-            if (!isFilter) {
-                collect(newItem, world);
-            }
             hasSplit = true;
         }
         if (hasSplit) {
-            originalStack.setCount(0);
+            thit.discard();
         }
     }
 }
