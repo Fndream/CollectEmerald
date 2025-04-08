@@ -34,18 +34,35 @@ public abstract class ItemEntityMixin {
     @Unique
     private static int runTick = 0;
 
+    private boolean isCovetedItem;
+
+    @Inject(method = "setCovetedItem", at = @At(value = "HEAD"))
+    private void setCovetedItem(CallbackInfo ci) {
+        this.isCovetedItem = true;
+    }
+
     @Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;tick()V"))
     private void tick(CallbackInfo ci) {
         ItemEntity thit = (ItemEntity) (Object) this;
         if (!(thit.getWorld() instanceof ServerWorld world)) {
             return;
         }
-        if (thit.getItemAge() < 40) {
-            if (thit.getItemAge() == 1 && thit.getCommandTags().contains("collect")) {
-                thit.tryMerge();
-                collect(thit, world);
+        if (isCovetedItem) {
+            if (thit.getItemAge() < -5960) {
+                if (thit.getItemAge() == -5999 && thit.getCommandTags().contains("collect")) {
+                    thit.tryMerge();
+                    collect(thit, world);
+                }
+                return;
             }
-            return;
+        } else {
+            if (thit.getItemAge() < 40) {
+                if (thit.getItemAge() == 1 && thit.getCommandTags().contains("collect")) {
+                    thit.tryMerge();
+                    collect(thit, world);
+                }
+                return;
+            }
         }
         if (thit.getCommandTags().contains("collectf")) {
             return;
