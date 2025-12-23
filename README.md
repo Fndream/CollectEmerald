@@ -11,3 +11,6 @@
 ## 用途
 - 使用此特性在游戏初期轻松实现自动物品分类仓库。
 - 将此特性应用于各种陷阱的物品收集装置中。
+
+## 构建
+- 该项目使用Fallen-Breath的[fabric-mod-template](https://github.com/Fallen-Breath/fabric-mod-template)构建。
