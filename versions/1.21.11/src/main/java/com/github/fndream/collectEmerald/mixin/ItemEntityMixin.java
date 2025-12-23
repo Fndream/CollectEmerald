@@ -48,7 +48,7 @@ public abstract class ItemEntityMixin {
     @Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;tick()V"))
     private void tick(CallbackInfo ci) {
         ItemEntity thit = (ItemEntity) (Object) this;
-        if (!(thit.getWorld() instanceof ServerWorld world)) {
+        if (!(thit.getEntityWorld() instanceof ServerWorld world)) {
             return;
         }
         if (isCovetedItem) {

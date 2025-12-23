@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "id": "collect-emerald",
+  "id": "${id}",
   "version": "${version}",
-  "name": "collect-emerald",
+  "name": "${name}",
   "description": "Collect Emerald",
   "authors": [
     "Fndream"
@@ -16,14 +16,16 @@
   "icon": "icon.png",
   "environment": "*",
   "entrypoints": {
-    "main": ["com.github.fndream.collectEmerald.CollectEmerald"]
+    "main": [
+      "com.github.fndream.collectEmerald.CollectEmerald"
+    ]
   },
-  "accessWidener" : "collect-emerald.accesswidener",
+  "accessWidener" : "collect_emerald.accesswidener",
   "mixins": [
-    "collect-emerald.mixins.json"
+    "collect_emerald.mixins.json"
   ],
   "depends": {
-    "fabricloader": ">=0.16.0",
-    "minecraft": ">=1.21.1"
+    "fabricloader": ">=0.11.4",
+    "minecraft": "${minecraft_dependency}"
   }
 }
